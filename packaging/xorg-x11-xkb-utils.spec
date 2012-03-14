@@ -56,10 +56,7 @@ rm -rf $RPM_BUILD_ROOT
    done
 }
 
-%remove_docs
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+%docs_package
 
 %files
 %{_bindir}/*
