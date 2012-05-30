@@ -6,6 +6,7 @@ License: MIT/X11
 Group: User Interface/X
 URL: http://www.x.org
 Source: %{name}-%{version}.tar.gz
+Source1001: packaging/xorg-x11-xkb-utils.manifest 
 
 BuildRequires: pkgconfig(xorg-macros)
 BuildRequires: pkgconfig(x11)
@@ -32,6 +33,7 @@ xkbwatch shows the changing status of modifiers and LEDs.
 %setup -q
 
 %build
+cp %{SOURCE1001} .
 # Build all apps
 {
     for app in %{DEF_SUBDIRS}; do
@@ -59,4 +61,5 @@ rm -rf $RPM_BUILD_ROOT
 %docs_package
 
 %files
+%manifest xorg-x11-xkb-utils.manifest
 %{_bindir}/*
