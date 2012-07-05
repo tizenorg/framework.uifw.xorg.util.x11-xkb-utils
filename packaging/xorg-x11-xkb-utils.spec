@@ -1,23 +1,23 @@
-Summary: X11 XKB utilities
-Name: xorg-x11-xkb-utils
-Version: 7.6
-Release: 8
-License: MIT/X11
-Group: User Interface/X
-URL: http://www.x.org
-Source: %{name}-%{version}.tar.gz
-Source1001: packaging/xorg-x11-xkb-utils.manifest 
+Name:           xorg-x11-xkb-utils
+Version:        7.6
+Release:        8
+License:        MIT/X11
+Summary:        X11 XKB utilities
+Url:            http://www.x.org
+Group:          User Interface/X
+Source:         %{name}-%{version}.tar.gz
+Source1001:     packaging/xorg-x11-xkb-utils.manifest
 
-BuildRequires: pkgconfig(xorg-macros)
-BuildRequires: pkgconfig(x11)
-BuildRequires: pkgconfig(xaw7)
-BuildRequires: pkgconfig(xkbfile)
-BuildRequires: pkgconfig(inputproto)
-BuildRequires: byacc
+BuildRequires:  byacc
+BuildRequires:  pkgconfig(inputproto)
+BuildRequires:  pkgconfig(x11)
+BuildRequires:  pkgconfig(xaw7)
+BuildRequires:  pkgconfig(xkbfile)
+BuildRequires:  pkgconfig(xorg-macros)
 
 %define DEF_SUBDIRS setxkbmap xkbcomp xkbevd xkbprint xkbutils
 
-Provides: %{DEF_SUBDIRS}
+Provides:       %{DEF_SUBDIRS}
 
 %description
 xkbutils contains a number of client-side utilities for XKB, the X11 keyboard extension.
@@ -39,21 +39,18 @@ cp %{SOURCE1001} .
     for app in %{DEF_SUBDIRS}; do
         pushd $app
         autoreconf -i -v -f
-        ./configure --prefix=/usr --mandir=/usr/share/man \
-                    --infodir=/usr/share/info \
-                    --datadir=/opt/etc 
+        %configure  --datadir=/etc
         make
         popd
     done
 }
 
 %install
-rm -rf $RPM_BUILD_ROOT
 # Install all apps
 {
    for app in %{DEF_SUBDIRS} ; do
       pushd $app
-      make install DESTDIR=$RPM_BUILD_ROOT
+%make_install
       popd
    done
 }

@@ -1,0 +1,14 @@
+* Thu Jul 05 2012 Anas Nashif <anas.nashif@intel.com> 700f372
+- move /opt/etc/ to /etc
+
+* Wed May 30 2012 Ryan Ware <ryan.r.ware@intel.com> 1af4a21
+- Add default Smack manifest for xorg-x11-xkb-utils.spec
+
+* Wed Mar 14 2012 Yan Yin <yan.yin@intel.com> 32eb534
+- update for beta universally
+
+* Fri Jan 06 2012 Kibum Kim <kb0929.kim@samsung.com> f689ca1
+- Git init
+[ Eunkyoung Kim ]
+- Initial empty repository
+
