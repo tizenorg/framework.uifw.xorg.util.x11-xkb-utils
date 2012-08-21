@@ -51,7 +51,7 @@ $(STAMP_DIR)/build-%: $(STAMP_DIR)/genscripts $(STAMP_DIR)/patch
 	cd $*-obj-$(DEB_HOST_GNU_TYPE) && \
 	../$*/configure --prefix=/usr --mandir=\$${prefix}/share/man \
 	                --infodir=\$${prefix}/share/info $(confflags) \
-			--datadir=/opt/etc \
+			--datadir=/usr/etc \
 	                CFLAGS="$(CFLAGS) "
 	cd $*-obj-$(DEB_HOST_GNU_TYPE) && $(MAKE)
 	>$@

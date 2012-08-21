@@ -1,3 +1,19 @@
+x11-xkb-utils (7.6-10slp2) unstable; urgency=low
+
+  * Fix datadir from /opt/etc to /usr/etc/ in packaging/x11-xkb-utils.spec file
+  * Git: 165.213.180.234:slp/pkgs/xorg/util/x11-xkb-utils
+  * Tag: x11-xkb-utils_7.6-10slp2
+
+ -- Sung-Jin Park <sj76.park@samsung.com>  Mon, 18 Jun 2012 10:50:09 +0900
+
+x11-xkb-utils (7.6-9slp2) unstable; urgency=low
+
+  * Change datadir from /opt/etc to /usr/etc in debian/rules file
+  * Git: 165.213.180.234:slp/pkgs/xorg/util/x11-xkb-utils
+  * Tag: x11-xkb-utils_7.6-9slp2
+
+ -- Sung-Jin Park <sj76.park@samsung.com>  Wed, 07 Mar 2012 16:24:32 +0900
+
 x11-xkb-utils (7.6-8slp2) unstable; urgency=low
 
   * Remove ylwrap, xkbparse.c and cfgparse.c file which will be made during build time
@@ -8,7 +24,7 @@ x11-xkb-utils (7.6-8slp2) unstable; urgency=low
 
 x11-xkb-utils (7.6-7slp2) unstable; urgency=low
 
-  * [X11R7.6] upgrade package  
+  * [X11R7.6] upgrade package
   * Git: 165.213.180.234:slp/pkgs/xorg/util/x11-xkb-utils
   * Tag: x11-xkb-utils_7.6-7slp2
 
