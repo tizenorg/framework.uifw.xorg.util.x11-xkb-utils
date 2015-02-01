@@ -1,6 +1,6 @@
 Summary: X.Org X11 xkb utilities
 Name: xorg-x11-xkb-utils
-Version: 7.7
+Version: 7.9.1
 Release: 1
 License: MIT
 Group: User Interface/X
@@ -22,8 +22,8 @@ BuildRequires: byacc
 BuildRequires: xorg-x11-proto-input
 BuildRequires: libxkbfile-devel
 BuildRequires: libX11-devel
-#BuildRequires: libXaw-devel
-#BuildRequires: libXt-devel
+BuildRequires: libXaw-devel
+BuildRequires: libXt-devel
 # FIXME: xkbvleds requires libXext, but autotools doesn't check/require it:
 # gcc  -O2 -g -march=i386 -mcpu=i686   -o xkbvleds  xkbvleds-xkbvleds.o
 # xkbvleds-LED.o xkbvleds-utils.o -lXaw7 -lXmu -lXt -lSM -lICE -lXext -lXpm -lX11 -ldl
@@ -35,10 +35,10 @@ BuildRequires: libXext-devel
 # xkbvleds-LED.o xkbvleds-utils.o -lXaw7 -lXmu -lXt -lSM -lICE -lXext -lXpm -lX11 -ldl
 # /usr/bin/ld: cannot find -lXpm
 # libXpm-devel needed for xkbutils (from above error)
-#BuildRequires: libXpm-devel
+BuildRequires: libXpm-devel
 
-#Provides: setxkbmap xkbcomp
-Provides: xkbcomp
+Provides: setxkbmap xkbcomp
+Requires: dlogutil
 Obsoletes: XFree86 xorg-x11
 
 %package devel
@@ -64,8 +64,7 @@ X.Org X11 xkb gadgets
 
 %build
 export CFLAGS="$CFLAGS $RPM_OPT_FLAGS -DHAVE_STRCASECMP -Os"
-#for pkg in xkbutils setxkbmap xkbcomp xkbevd xkbprint ; do
-for pkg in xkbcomp ; do
+for pkg in xkbutils setxkbmap xkbcomp xkbevd xkbprint ; do
     pushd $pkg*
     [ $pkg == xkbcomp ] && rm xkbparse.c # force regen
     %configure --prefix=/usr --datadir=/etc
@@ -78,8 +77,7 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p %{buildroot}/usr/share/license
 cp -af COPYING %{buildroot}/usr/share/license/%{name}
 cp -af COPYING %{buildroot}/usr/share/license/xorg-x11-xkb-extras
-#for pkg in xkbutils setxkbmap xkbcomp xkbevd xkbprint ; do
-for pkg in xkbcomp ; do
+for pkg in xkbutils setxkbmap xkbcomp xkbevd xkbprint ; do
     pushd $pkg*
     make install DESTDIR=$RPM_BUILD_ROOT
     popd
@@ -91,9 +89,10 @@ done
 rm -rf $RPM_BUILD_ROOT
 
 %files
+%manifest xkbutils.manifest
 %defattr(-,root,root,-)
 /usr/share/license/%{name}
-#%{_bindir}/setxkbmap
+%{_bindir}/setxkbmap
 %{_bindir}/xkbcomp
 #%{_mandir}/man1/setxkbmap.1*
 #%{_mandir}/man1/xkbcomp.1*
@@ -103,11 +102,11 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/license/xorg-x11-xkb-extras
 #%doc xkbutils-%{xkbutils_version}/COPYING
 #%doc xkbutils-%{xkbutils_version}/README
-#%{_bindir}/xkbbell
-#%{_bindir}/xkbevd
-#%{_bindir}/xkbprint
-#%{_bindir}/xkbvleds
-#%{_bindir}/xkbwatch
+%{_bindir}/xkbbell
+%{_bindir}/xkbevd
+%{_bindir}/xkbprint
+%{_bindir}/xkbvleds
+%{_bindir}/xkbwatch
 #%{_mandir}/man1/xkbbell.1*
 #%{_mandir}/man1/xkbevd.1*
 #%{_mandir}/man1/xkbprint.1*
