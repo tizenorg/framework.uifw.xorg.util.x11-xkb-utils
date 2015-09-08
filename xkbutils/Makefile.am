@@ -1,6 +1,6 @@
-# 
+#
 #  Copyright 2005  Red Hat, Inc.
-# 
+#
 #  Permission to use, copy, modify, distribute, and sell this software and its
 #  documentation for any purpose is hereby granted without fee, provided that
 #  the above copyright notice appear in all copies and that both that
@@ -10,7 +10,7 @@
 #  specific, written prior permission.  Red Hat makes no
 #  representations about the suitability of this software for any purpose.  It
 #  is provided "as is" without express or implied warranty.
-# 
+#
 #  RED HAT DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
 #  INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
 #  EVENT SHALL RED HAT BE LIABLE FOR ANY SPECIAL, INDIRECT OR
@@ -21,13 +21,14 @@
 
 bin_PROGRAMS = xkbvleds xkbwatch xkbbell
 
-AM_CFLAGS = $(CWARNFLAGS)
-
+AM_CFLAGS = $(CWARNFLAGS) -fPIE
+AM_LDFLAGS = -pie
 # xkbvleds
 
 xkbvleds_SOURCES = xkbvleds.c LED.c LED.h LEDP.h utils.c utils.h
 
 xkbvleds_CFLAGS = $(XKBVLEDS_CFLAGS) $(AM_CFLAGS)
+xkbvleds_LDFLAGS = $(XKBVLEDS_LDFLAGS) $(AM_LDFLAGS)
 xkbvleds_LDADD = $(XKBVLEDS_LIBS)
 
 # xkbbell
@@ -35,22 +36,24 @@ xkbvleds_LDADD = $(XKBVLEDS_LIBS)
 xkbbell_SOURCES = xkbbell.c
 
 xkbbell_CFLAGS = $(XKBBELL_CFLAGS) $(AM_CFLAGS)
+xkbbell_LDFLAGS = $(XKBBELL_LDFLAGS) $(AM_LDFLAGS)
 xkbbell_LDADD = $(XKBBELL_LIBS)
 
 # xkbwatch
 
 xkbwatch_SOURCES = xkbwatch.c LED.c LED.h LEDP.h utils.c utils.h
 xkbwatch_CFLAGS = $(XKBWATCH_CFLAGS) $(AM_CFLAGS)
+xkbwatch_LDFLAGS = $(XKBWATCH_LDFLAGS) $(AM_LDFLAGS)
 xkbwatch_LDADD = $(XKBWATCH_LIBS)
 
 # Man pages
-appman_PRE = xkbbell.man xkbvleds.man xkbwatch.man  
+appman_PRE = xkbbell.man xkbvleds.man xkbwatch.man
 
 appmandir = $(APP_MAN_DIR)
 
 appman_DATA = $(appman_PRE:man=@APP_MAN_SUFFIX@)
 
-EXTRA_DIST = $(appman_PRE) 
+EXTRA_DIST = $(appman_PRE)
 MAINTAINERCLEANFILES = ChangeLog INSTALL
 CLEANFILES = $(appman_DATA)
 
