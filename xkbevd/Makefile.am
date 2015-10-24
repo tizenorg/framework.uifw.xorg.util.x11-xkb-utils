@@ -25,7 +25,7 @@ AM_CPPFLAGS = -DDFLT_XKB_CONFIG_ROOT='"$(datadir)/X11/xkb"' -fPIE
 AM_CFLAGS = $(CWARNFLAGS) $(XKBEVD_CFLAGS) -fPIE
 AM_LDFLAGS = $(XKBEVD_LDFLAGS) -pie
 
-xkbevd_LDADD = $(XKBEVD_LIBS)
+xkbevd_LDADD = $(XKBEVD_LIBS) -lttrace
 
 xkbevd_SOURCES =	\
         cfgparse.y \

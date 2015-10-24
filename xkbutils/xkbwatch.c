@@ -43,6 +43,16 @@
 #include "utils.h"
 #include "LED.h"
 
+#ifdef ENABLE_TTRACE
+#include <ttrace.h>
+
+#define TTRACE_BEGIN(NAME) traceBegin(TTRACE_TAG_INPUT, NAME)
+#define TTRACE_END() traceEnd(TTRACE_TAG_INPUT)
+#else //ENABLE_TTRACE
+#define TTRACE_BEGIN(NAME)
+#define TTRACE_END()
+#endif //ENABLE_TTRACE
+
 /***====================================================================***/
 
 static	Display *	inDpy,*outDpy;
@@ -85,6 +95,8 @@ static char *	fallback_resources[] = {
     NULL
 };
 
+    TTRACE_BEGIN("XKBUTIL:XKBWATCH:START");
+
     uSetEntryFile(NullString);
     uSetDebugFile(NullString);
     uSetErrorFile(NullString);
@@ -94,6 +106,7 @@ static char *	fallback_resources[] = {
 				 sessionShellWidgetClass, NULL, ZERO);
     if (toplevel==NULL) {
 	uFatalError("Couldn't create application top level\n");
+	TTRACE_END();
 	exit(1);
     }
     inDpy= outDpy= XtDisplay(toplevel);
@@ -103,12 +116,16 @@ static char *	fallback_resources[] = {
 	mn= XkbMinorVersion;
 	if (!XkbQueryExtension(inDpy,&i1,&evBase,&errBase,&mj,&mn)) {
 	    uFatalError("Server doesn't support a compatible XKB\n");
+
+	    TTRACE_END();
 	    exit(1);
 	}
     }
     panel= XtCreateManagedWidget("xkbwatch",boxWidgetClass,toplevel,vArgs,1);
     if (panel==NULL) {
 	uFatalError("Couldn't create top level box\n");
+
+	TTRACE_END();
 	exit(1);
     }
     baseBox= XtCreateManagedWidget("base",boxWidgetClass,panel,hArgs,1);
@@ -228,5 +245,7 @@ static char *	fallback_resources[] = {
     if (outDpy!=inDpy)
 	XCloseDisplay(outDpy);
     inDpy= outDpy= NULL;
+
+    TTRACE_END();
     return 0;
 }

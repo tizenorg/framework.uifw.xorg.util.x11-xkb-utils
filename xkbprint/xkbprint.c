@@ -48,6 +48,16 @@
 #include "utils.h"
 #include "xkbprint.h"
 
+#ifdef ENABLE_TTRACE
+#include <ttrace.h>
+
+#define TTRACE_BEGIN(NAME) traceBegin(TTRACE_TAG_INPUT, NAME)
+#define TTRACE_END() traceEnd(TTRACE_TAG_INPUT)
+#else //ENABLE_TTRACE
+#define TTRACE_BEGIN(NAME)
+#define TTRACE_END()
+#endif //ENABLE_TTRACE
+
 /***====================================================================***/
 
 
@@ -596,11 +606,15 @@ FILE 	*	file;
 int		ok;
 XkbFileInfo 	result;
 
+    TTRACE_BEGIN("XKBUTIL:XKBPRINT:START");
+
     uSetEntryFile(NullString);
     uSetDebugFile(NullString);
     uSetErrorFile(NullString);
-    if (!parseArgs(argc,argv))
+    if (!parseArgs(argc,argv)) {
+       TTRACE_END();
 	exit(1);
+    }
 #ifdef DEBUG
 #ifdef sgi
     if (debugFlags&0x4)
@@ -624,6 +638,8 @@ XkbFileInfo 	result;
 	inDpy= GetDisplay(argv[0],inDpyName);
 	if (!inDpy) {
 	    uAction("Exiting\n");
+
+	    TTRACE_END();
 	    exit(1);
 	}
     }
@@ -632,6 +648,8 @@ XkbFileInfo 	result;
 	outDpy= GetDisplay(argv[0],outDpyName);
 	if (!outDpy) {
 	    uAction("Exiting\n");
+
+	    TTRACE_END();
 	    exit(1);
 	}
     }
@@ -645,6 +663,8 @@ XkbFileInfo 	result;
 	    uError("X library supports incompatible version %d.%02d\n",
 				mjr,mnr);
 	    uAction("Exiting\n");
+
+	    TTRACE_END();
 	    exit(1);
 	}
     }
@@ -656,7 +676,11 @@ XkbFileInfo 	result;
 	    uFatalError("Cannot allocate keyboard description\n");
 	    /* NOTREACHED */
 	}
-	tmp= XkmReadFile(file,XkmGeometryMask,XkmKeymapLegal,&result);
+
+       TTRACE_BEGIN("XKBUTIL:XKBPRINT:XKM_READ_FILE");
+	tmp= XkmReadFile(file,XkmGeometryMask,XkmKeymapLegal,&result);	
+	TTRACE_END();
+
 	if ((tmp&XkmGeometryMask)!=0) {
 	    uError("Couldn't read geometry from XKM file \"%s\"\n",inputFile);
 	    uAction("Exiting\n");
@@ -719,6 +743,7 @@ XkbFileInfo 	result;
 	    (XkbChangeKbdDisplay(outDpy,&result)!=Success)) {
 	    uInternalError("Error converting keyboard display from %s to %s\n",
 	    						inDpyName,outDpyName);
+           TTRACE_END();
 	    exit(1);
 	}
 	if (outputFile!=NULL) {
@@ -733,6 +758,8 @@ XkbFileInfo 	result;
 		    uError("Cannot open \"%s\" to write keyboard description\n",
 								outputFile);
 		     uAction("Exiting\n");
+
+		     TTRACE_END();
 		     exit(1);
 		}
 	    }
@@ -759,5 +786,7 @@ XkbFileInfo 	result;
     inDpy= NULL;
     if (outDpy)
 	XCloseDisplay(outDpy);
+
+    TTRACE_END();
     return (ok==0);
 }

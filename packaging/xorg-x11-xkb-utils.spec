@@ -1,6 +1,6 @@
 Summary: X.Org X11 xkb utilities
 Name: xorg-x11-xkb-utils
-Version: 7.9.1
+Version: 7.9.3
 Release: 1
 License: MIT
 Group: User Interface/X
@@ -36,6 +36,7 @@ BuildRequires: libXext-devel
 # /usr/bin/ld: cannot find -lXpm
 # libXpm-devel needed for xkbutils (from above error)
 BuildRequires: libXpm-devel
+BuildRequires: pkgconfig(ttrace)
 
 Provides: setxkbmap xkbcomp
 Requires: dlogutil
@@ -63,7 +64,7 @@ X.Org X11 xkb gadgets
 #%setup -q -c %{name}-%{version} -a1 -a2 -a3 -a4
 
 %build
-export CFLAGS="$CFLAGS $RPM_OPT_FLAGS -DHAVE_STRCASECMP -Os"
+export CFLAGS="$CFLAGS $RPM_OPT_FLAGS -DHAVE_STRCASECMP -Os -DENABLE_TTRACE"
 for pkg in xkbutils setxkbmap xkbcomp xkbevd xkbprint ; do
     pushd $pkg*
     [ $pkg == xkbcomp ] && rm xkbparse.c # force regen

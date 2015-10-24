@@ -33,6 +33,15 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <X11/X.h>
 #include <X11/XKBlib.h>
 #include <X11/extensions/XI.h>
+#ifdef ENABLE_TTRACE
+#include <ttrace.h>
+
+#define TTRACE_BEGIN(NAME) traceBegin(TTRACE_TAG_INPUT, NAME)
+#define TTRACE_END() traceEnd(TTRACE_TAG_INPUT)
+#else //ENABLE_TTRACE
+#define TTRACE_BEGIN(NAME)
+#define TTRACE_END()
+#endif //ENABLE_TTRACE
 
 static	char		*dpyName = NULL;
 static	int		 volume = 0;
@@ -151,6 +160,7 @@ main(int argc, char *argv[])
 Display	*dpy;
 int	i1,i2,i3,i4,i5;
 
+    TTRACE_BEGIN("XKBUTIL:XKBBELL:START");
   
     if (!parseArgs(argc,argv)) {
 	fprintf(stderr,"Usage: %s [ <options> ] <name>\n",argv[0]);
@@ -168,11 +178,15 @@ int	i1,i2,i3,i4,i5;
 	fprintf(stderr,"-w <id>            specifies window to use\n");
 	fprintf(stderr,"If neither device nor feedback are specified, %s uses the\n",argv[0]);
 	fprintf(stderr,"default values for the core keyboard device.\n");
+
+	TTRACE_END();        
 	return 1;
     }
     dpy = XOpenDisplay(dpyName);
     if ( !dpy ) {
 	fprintf(stderr,"Couldn't open display \"%s\"\n",XDisplayName(dpyName));
+
+	TTRACE_END();
 	return 1;
     }
     if (synch)
@@ -219,5 +233,7 @@ int	i1,i2,i3,i4,i5;
     }
 /* BAIL: */
     XCloseDisplay(dpy);
+
+    TTRACE_END();
     return 0;
 }

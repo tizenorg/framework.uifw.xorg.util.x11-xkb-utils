@@ -1,5 +1,5 @@
 dnl  Copyright 2005 Red Hat, Inc.
-dnl 
+dnl
 dnl  Permission to use, copy, modify, distribute, and sell this software and its
 dnl  documentation for any purpose is hereby granted without fee, provided that
 dnl  the above copyright notice appear in all copies and that both that
@@ -9,7 +9,7 @@ dnl  advertising or publicity pertaining to distribution of the software without
 dnl  specific, written prior permission.  Red Hat makes no
 dnl  representations about the suitability of this software for any purpose.  It
 dnl  is provided "as is" without express or implied warranty.
-dnl 
+dnl
 dnl  RED HAT DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
 dnl  INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
 dnl  EVENT SHALL RED HAT BE LIABLE FOR ANY SPECIAL, INDIRECT OR
@@ -50,6 +50,11 @@ REQUIRED_MODULES="x11 xkbfile xproto >= 7.0.17"
 # Checks for pkg-config packages
 PKG_CHECK_MODULES(XKBCOMP, [$REQUIRED_MODULES])
 AC_SUBST(REQUIRED_MODULES)
+
+# ttrace support
+PKG_CHECK_MODULES(TTRACE, [ttrace],
+		AC_DEFINE(ENABLE_TTRACE, 1, [ttrace available]));
+AC_SUBST(TTRACE)
 
 AC_ARG_WITH([xkb_config_root],
     [AS_HELP_STRING([--with-xkb-config-root=<paths>],

@@ -5,7 +5,16 @@
 					<label name="xorg::screencapture"/>
 				</provide>
 				<request>
-					<smack request="dlogutil" type="rx"/>
+					<smack request="device::input" type="rwx"/>
+					<smack request="device::video" type="rwx"/>
+					<smack request="systemd" type="rwx"/>
+					<smack request="systemd::no-label" type="rx"/>
+					<smack request="system::sys_logging" type="rwx"/>
+					<smack request="system::homedir" type="rx"/>
+					<smack request="e17" type="rwx"/>
+					<smack request="deviced" type="rwx"/>
+					<smack request="device::app_logging" type="wx"/>
+					<smack request="device::sys_logging" type="wx"/>
 				</request>
 				<permit>
 					<smack permit="dbus" type="w"/>

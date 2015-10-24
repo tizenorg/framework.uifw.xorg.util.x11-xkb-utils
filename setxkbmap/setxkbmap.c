@@ -36,6 +36,16 @@
 #include <X11/extensions/XKBconfig.h>
 #include <X11/extensions/XKBrules.h>
 
+#ifdef ENABLE_TTRACE
+#include <ttrace.h>
+
+#define TTRACE_BEGIN(NAME) traceBegin(TTRACE_TAG_INPUT, NAME)
+#define TTRACE_END() traceEnd(TTRACE_TAG_INPUT)
+#else //ENABLE_TTRACE
+#define TTRACE_BEGIN(NAME)
+#define TTRACE_END()
+#endif //ENABLE_TTRACE
+
 #ifndef PATH_MAX
 #ifdef MAXPATHLEN
 #define PATH_MAX MAXPATHLEN
@@ -594,6 +604,8 @@ getServerValues(void)
     XkbRF_VarDefsRec vd;
     char *tmp = NULL;
 
+    TTRACE_BEGIN("XKBUTIL:SETXKBMAP:GET_SERVER_VALUE");
+
     if (!XkbRF_GetNamesProp(dpy, &tmp, &vd) || !tmp)
     {
         VMSG1(3, "Couldn't interpret %s property\n", _XKB_RF_NAMES_PROP_ATOM);
@@ -618,6 +630,8 @@ getServerValues(void)
         addStringToOptions(vd.options, &options);
         XFree(vd.options);
     }
+
+    TTRACE_END();
     return True;
 }
 
@@ -732,14 +746,18 @@ applyConfig(char *name)
 {
     FILE *fp;
     Bool ok;
+    TTRACE_BEGIN("XKBUTIL:SETXKBMAP:APPLY_CONFIG");
 
-    if ((fp = findFileInPath(name)) == NULL)
+    if ((fp = findFileInPath(name)) == NULL) {
+        TTRACE_END();
         return False;
+    }
     ok = XkbCFParse(fp, XkbCFDflts, NULL, &cfgResult);
     fclose(fp);
     if (!ok)
     {
         ERR1("Couldn't find configuration file \"%s\"\n", name);
+        TTRACE_END();
         return False;
     }
     if (cfgResult.rules_file)
@@ -802,6 +820,7 @@ applyConfig(char *name)
         MSG("After config file:\n");
         dumpNames(True, True);
     }
+    TTRACE_END();
     return True;
 }
 
@@ -829,6 +848,7 @@ applyRules(void)
 {
     int i;
     char *rfName;
+    TTRACE_BEGIN("XKBUTIL:SETXKBMAP:APPLY_RULES");
 
     if (settings.model.src || settings.layout.src || settings.variant.src
         || options.item)
@@ -874,6 +894,7 @@ applyRules(void)
         if (!rules)
         {
             ERR1("Couldn't find rules file (%s) \n", rfName);
+            TTRACE_END();
             return False;
         }
         /* Let the rules file to the magic, then update the svValues with
@@ -919,6 +940,7 @@ applyRules(void)
     {
         MSG("No rules variables specified.  Rules file ignored\n");
     }
+    TTRACE_END();
     return True;
 }
 
@@ -996,18 +1018,20 @@ printKeymap(void)
 Bool
 applyComponentNames(void)
 {
+    TTRACE_BEGIN("XKBUTIL:SETXKBMAP:APPLY_COMPONENT");
+
     if (!checkName(settings.types.value, "types"))
-        return False;
+        goto failed;
     if (!checkName(settings.compat.value, "compat"))
-        return False;
+        goto failed;
     if (!checkName(settings.symbols.value, "symbols"))
-        return False;
+        goto failed;
     if (!checkName(settings.keycodes.value, "keycodes"))
-        return False;
+        goto failed;
     if (!checkName(settings.geometry.value, "geometry"))
-        return False;
+        goto failed;
     if (!checkName(settings.keymap.value, "keymap"))
-        return False;
+        goto failed;
 
     if (verbose > 5)
     {
@@ -1031,7 +1055,7 @@ applyComponentNames(void)
         if (!xkb)
         {
             ERR("Error loading new keyboard description\n");
-            return False;
+            goto failed;
         }
         /* update the XKB root property */
         if (settings.rules.value && (rdefs.model || rdefs.layout))
@@ -1050,27 +1074,41 @@ applyComponentNames(void)
     {
         dumpNames(True, False);
     }
+    TTRACE_END();
     return True;
+failed:
+    TTRACE_END();
+    return False;
 }
 
 
 int
 main(int argc, char **argv)
 {
-    if ((!parseArgs(argc, argv)) || (!getDisplay(argc, argv)))
+    TTRACE_BEGIN("XKBUTIL:SETXKBMAP:START");
+    if ((!parseArgs(argc, argv)) || (!getDisplay(argc, argv))) {
+        TTRACE_END();
         exit(-1);
+    }
     settings.locale.value = setlocale(LC_ALL, settings.locale.value);
     settings.locale.src = FROM_SERVER;
     VMSG1(7, "locale is %s\n", settings.locale.value);
     if (dpy)
         getServerValues();
-    if (settings.config.value && (!applyConfig(settings.config.value)))
+    if (settings.config.value && (!applyConfig(settings.config.value))) {
+        TTRACE_END();
         exit(-3);
-    if (!applyRules())
+    }
+    if (!applyRules()) {
+        TTRACE_END();
         exit(-4);
-    if (!applyComponentNames())
+    }
+    if (!applyComponentNames()) {
+        TTRACE_END();
         exit(-5);
+    }
     if (dpy)
         XCloseDisplay(dpy);
+    TTRACE_END();
     exit(0);
 }

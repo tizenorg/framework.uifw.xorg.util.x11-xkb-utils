@@ -29,7 +29,7 @@ xkbvleds_SOURCES = xkbvleds.c LED.c LED.h LEDP.h utils.c utils.h
 
 xkbvleds_CFLAGS = $(XKBVLEDS_CFLAGS) $(AM_CFLAGS)
 xkbvleds_LDFLAGS = $(XKBVLEDS_LDFLAGS) $(AM_LDFLAGS)
-xkbvleds_LDADD = $(XKBVLEDS_LIBS)
+xkbvleds_LDADD = $(XKBVLEDS_LIBS) -lttrace
 
 # xkbbell
 
@@ -37,14 +37,14 @@ xkbbell_SOURCES = xkbbell.c
 
 xkbbell_CFLAGS = $(XKBBELL_CFLAGS) $(AM_CFLAGS)
 xkbbell_LDFLAGS = $(XKBBELL_LDFLAGS) $(AM_LDFLAGS)
-xkbbell_LDADD = $(XKBBELL_LIBS)
+xkbbell_LDADD = $(XKBBELL_LIBS) -lttrace
 
 # xkbwatch
 
 xkbwatch_SOURCES = xkbwatch.c LED.c LED.h LEDP.h utils.c utils.h
 xkbwatch_CFLAGS = $(XKBWATCH_CFLAGS) $(AM_CFLAGS)
 xkbwatch_LDFLAGS = $(XKBWATCH_LDFLAGS) $(AM_LDFLAGS)
-xkbwatch_LDADD = $(XKBWATCH_LIBS)
+xkbwatch_LDADD = $(XKBWATCH_LIBS) -lttrace
 
 # Man pages
 appman_PRE = xkbbell.man xkbvleds.man xkbwatch.man

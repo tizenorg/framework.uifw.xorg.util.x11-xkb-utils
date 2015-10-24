@@ -28,7 +28,15 @@
 #include <X11/Xosdefs.h>
 #include <stdlib.h>
 #include "xkbevd.h"
+#ifdef ENABLE_TTRACE
+#include <ttrace.h>
 
+#define TTRACE_BEGIN(NAME) traceBegin(TTRACE_TAG_INPUT, NAME)
+#define TTRACE_END() traceEnd(TTRACE_TAG_INPUT)
+#else //ENABLE_TTRACE
+#define TTRACE_BEGIN(NAME)
+#define TTRACE_END()
+#endif //ENABLE_TTRACE
 
 #define	lowbit(x)	((x) & (-(x)))
 
@@ -457,14 +465,17 @@ static char 	buf[1024];
 XkbEvent	ev;
 Bool		ok;
 
+    TTRACE_BEGIN("XKBUTIL:XKBEVD:START");
 
     yyin = stdin;
     uSetEntryFile(NullString);
     uSetDebugFile(NullString);
     uSetErrorFile(NullString);
 
-    if (!parseArgs(argc,argv))
+    if (!parseArgs(argc,argv)) {
+        TTRACE_END();
 	exit(1);
+    }
     file= NULL;
     XkbInitAtoms(NULL);
     if (cfgFileName==NULL) {
@@ -484,6 +495,8 @@ Bool		ok;
 	    if (cfgFileName!=buf) { /* user specified a file.  bail */
 		uError("Can't open config file \"%s\n",cfgFileName);
 		uAction("Exiting\n");
+
+		TTRACE_END();
 		exit(1);
 	    }
 	    sprintf(buf,DFLT_SYS_XKBEVD_CONFIG,DFLT_XKB_CONFIG_ROOT);
@@ -492,8 +505,12 @@ Bool		ok;
 		if (verbose) {
 		    uError("Couldn't find a config file anywhere\n");
 		    uAction("Exiting\n");
+
+		    TTRACE_END();
 		    exit(1);
 		}
+
+		TTRACE_END();
 		exit(0);
 	    }
 	}
@@ -503,6 +520,8 @@ Bool		ok;
 	if (fork()!=0) {
 	    if (verbose)
 		uInformation("Running in the background\n");
+
+	    TTRACE_END();
 	    exit(0);
 	}
     }
@@ -553,10 +572,12 @@ Bool		ok;
     }
 
     XCloseDisplay(dpy);
+    TTRACE_END();
     return (ok==0);
 BAILOUT:
     uAction("Exiting\n");
     if (dpy!=NULL)
 	XCloseDisplay(dpy);
+    TTRACE_END();
     exit(1);
 }

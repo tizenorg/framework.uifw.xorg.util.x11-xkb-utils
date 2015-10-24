@@ -47,6 +47,16 @@
 #include "tokens.h"
 #include <X11/extensions/XKBgeom.h>
 
+#ifdef ENABLE_TTRACE
+#include <ttrace.h>
+
+#define TTRACE_BEGIN(NAME) traceBegin(TTRACE_TAG_INPUT, NAME)
+#define TTRACE_END() traceEnd(TTRACE_TAG_INPUT)
+#else //ENABLE_TTRACE
+#define TTRACE_BEGIN(NAME)
+#define TTRACE_END()
+#endif //ENABLE_TTRACE
+
 #ifdef __UNIXOS2__
 #define chdir _chdir2
 #endif
@@ -882,6 +892,7 @@ main(int argc, char *argv[])
     int ok;
     XkbFileInfo result;
     Status status;
+    TTRACE_BEGIN("XKBUTIL:XKBCOMP:START");
 
     yyin = stdin;
     uSetEntryFile(NullString);
@@ -889,8 +900,10 @@ main(int argc, char *argv[])
     uSetErrorFile(NullString);
 
     XkbInitIncludePath();
-    if (!parseArgs(argc, argv))
+    if (!parseArgs(argc, argv)) {
+        TTRACE_END();
         exit(1);
+    }
 #ifdef DEBUG
     if (debugFlags & 0x2)
         yydebug = 1;
@@ -908,8 +921,11 @@ main(int argc, char *argv[])
     {
         Bool gotSome;
         gotSome = GenerateListing(outputFile);
-        if ((warningLevel > 7) && (!gotSome))
+        if ((warningLevel > 7) && (!gotSome)) {
+            TTRACE_END();
             return -1;
+        }
+        TTRACE_END();
         return 0;
     }
     if (inputFile != NULL)
@@ -930,6 +946,7 @@ main(int argc, char *argv[])
         if (!inDpy)
         {
             ACTION("Exiting\n");
+            TTRACE_END();
             exit(1);
         }
     }
@@ -939,6 +956,7 @@ main(int argc, char *argv[])
         if (!outDpy)
         {
             ACTION("Exiting\n");
+            TTRACE_END();
             exit(1);
         }
     }
@@ -954,6 +972,7 @@ main(int argc, char *argv[])
             ERROR2("X library supports incompatible version %d.%02d\n",
                    mjr, mnr);
             ACTION("Exiting\n");
+            TTRACE_END();
             exit(1);
         }
     }
@@ -1112,6 +1131,7 @@ main(int argc, char *argv[])
         {
             WSGO2("Error converting keyboard display from %s to %s\n",
                   inDpyName, outDpyName);
+            TTRACE_END();
             exit(1);
         }
         if (outputFile != NULL)
@@ -1154,6 +1174,7 @@ main(int argc, char *argv[])
                         ("Cannot open \"%s\" to write keyboard description\n",
                          outputFile);
                     ACTION("Exiting\n");
+                    TTRACE_END();
                     exit(1);
                 }
 #ifndef WIN32
@@ -1169,6 +1190,7 @@ main(int argc, char *argv[])
                         ("Cannot open \"%s\" to write keyboard description\n",
                          outputFile);
                     ACTION("Exiting\n");
+                    TTRACE_END();
                     exit(1);
                 }
             }
@@ -1225,5 +1247,6 @@ main(int argc, char *argv[])
     if (outDpy)
         XCloseDisplay(outDpy);
     uFinishUp();
+    TTRACE_END();
     return (ok == 0);
 }

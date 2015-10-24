@@ -43,6 +43,16 @@
 #include "utils.h"
 #include "LED.h"
 
+#ifdef ENABLE_TTRACE
+#include <ttrace.h>
+
+#define TTRACE_BEGIN(NAME) traceBegin(TTRACE_TAG_INPUT, NAME)
+#define TTRACE_END() traceEnd(TTRACE_TAG_INPUT)
+#else //ENABLE_TTRACE
+#define TTRACE_BEGIN(NAME)
+#define TTRACE_END()
+#endif //ENABLE_TTRACE
+
 /***====================================================================***/
 
 #define	YES		1
@@ -211,6 +221,8 @@ static char *	fallback_resources[] = {
     NULL
 };
 
+    TTRACE_BEGIN("XKBUTIL:XKBVLEDS:START");
+
     uSetEntryFile(NullString);
     uSetDebugFile(NullString);
     uSetErrorFile(NullString);
@@ -220,10 +232,14 @@ static char *	fallback_resources[] = {
 				 sessionShellWidgetClass, NULL, ZERO);
     if (toplevel==NULL) {
 	uFatalError("Couldn't create application top level\n");
+
+	TTRACE_END();
 	return 1;
     }
     if ((argc>1)&&(!parseArgs(argc,argv))) {
 	usage(argv[0]);
+
+	TTRACE_END();
 	return 1;
     }
     if ((wanted==0)&&(wantNamed==DONT_CARE)&&(wantExplicit==DONT_CARE)&&
@@ -235,8 +251,11 @@ static char *	fallback_resources[] = {
     outDpy= XtDisplay(toplevel);
     if (inDpyName!=NULL) {
 	inDpy= GetDisplay(argv[0],inDpyName);
-	if (!inDpy)
+	if (!inDpy) {
+
+	    TTRACE_END();
 	    return 1;
+	}
     }
     else {
 	inDpy= outDpy;
@@ -253,16 +272,22 @@ static char *	fallback_resources[] = {
 	}
 	if (!XkbQueryExtension(inDpy,&i1,&evBase,&errBase,&mj,&mn)) {
 	    uFatalError("Server doesn't support a compatible XKB\n");
+
+	    TTRACE_END();
 	    return 1;
 	}
     }
     else {
 	uFatalError("No input display\n");
+
+	TTRACE_END();
 	return 1;
     }
     panel= XtCreateManagedWidget("xkbleds",boxWidgetClass,toplevel,boxArgs,1);
     if (panel==NULL) {
 	uFatalError("Couldn't create list of leds\n");
+
+	TTRACE_END();
 	return 1;
     }
     real= virtual= named= explicit= automatic= 0;
@@ -271,14 +296,20 @@ static char *	fallback_resources[] = {
 	xkb= XkbGetMap(inDpy,0,XkbUseCoreKbd);
 	if (!xkb) {
 	    uFatalError("Couldn't read keymap\n");
+
+	    TTRACE_END();
 	    return 1;
 	}
 	if (XkbGetIndicatorMap(inDpy,XkbAllIndicatorsMask,xkb)!=Success) {
 	    uFatalError("Couldn't read indicator map\n");
+
+	    TTRACE_END();
 	    return 1;
 	}
 	if (XkbGetNames(inDpy,XkbAllNamesMask,xkb)!=Success) {
 	    uFatalError("Couldn't read indicator names\n");
+
+	    TTRACE_END();
 	    return 1;
 	}
 	for (i=0,bit=1;i<XkbNumIndicators;i++,bit<<=1) {
@@ -315,6 +346,8 @@ static char *	fallback_resources[] = {
     if (wanted==0) {
 	uError("No indicator maps match the selected criteria\n");
 	uAction("Exiting\n");
+
+	TTRACE_END();
 	return 1;
     }
 
@@ -356,5 +389,7 @@ static char *	fallback_resources[] = {
     if (outDpy!=inDpy)
 	XCloseDisplay(outDpy);
     inDpy= outDpy= NULL;
+
+    TTRACE_END();
     return 0;
 }

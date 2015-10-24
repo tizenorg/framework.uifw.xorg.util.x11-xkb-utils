@@ -15,9 +15,9 @@
 
 @SET_MAKE@
 
-# 
+#
 #  Copyright 2005  Red Hat, Inc.
-# 
+#
 #  Permission to use, copy, modify, distribute, and sell this software and its
 #  documentation for any purpose is hereby granted without fee, provided that
 #  the above copyright notice appear in all copies and that both that
@@ -27,7 +27,7 @@
 #  specific, written prior permission.  Red Hat makes no
 #  representations about the suitability of this software for any purpose.  It
 #  is provided "as is" without express or implied warranty.
-# 
+#
 #  RED HAT DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
 #  INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
 #  EVENT SHALL RED HAT BE LIABLE FOR ANY SPECIAL, INDIRECT OR
@@ -276,7 +276,7 @@ SUBDIRS = man
 AM_CFLAGS = $(CWARNFLAGS) $(SETXKBMAP_CFLAGS) \
 	-DDFLT_XKB_CONFIG_ROOT=\"$(XKBCONFIGROOT)\"
 
-setxkbmap_LDADD = $(SETXKBMAP_LIBS)
+setxkbmap_LDADD = $(SETXKBMAP_LIBS) -lttrace
 setxkbmap_SOURCES = \
         setxkbmap.c
 
@@ -333,7 +333,7 @@ config.h: stamp-h1
 stamp-h1: $(srcdir)/config.h.in $(top_builddir)/config.status
 	@rm -f stamp-h1
 	cd $(top_builddir) && $(SHELL) ./config.status config.h
-$(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
+$(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
 	rm -f stamp-h1
 	touch $@
@@ -377,7 +377,7 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
-setxkbmap$(EXEEXT): $(setxkbmap_OBJECTS) $(setxkbmap_DEPENDENCIES) 
+setxkbmap$(EXEEXT): $(setxkbmap_OBJECTS) $(setxkbmap_DEPENDENCIES)
 	@rm -f setxkbmap$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(setxkbmap_OBJECTS) $(setxkbmap_LDADD) $(LIBS)
 
